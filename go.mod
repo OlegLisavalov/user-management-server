@@ -3,6 +3,7 @@ module user-management-server
 go 1.22
 
 require (
+	github.com/golang-jwt/jwt/v4 v4.5.1
 	github.com/joho/godotenv v1.5.1
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.10
