@@ -3,16 +3,26 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"user-management-server/models"
 	"user-management-server/services"
 )
 
 func GetLeaderboard(w http.ResponseWriter, r *http.Request) {
-	users, err := services.GetTopUsersByPoints(10) // Получение топ-10 пользователей по очкам
+	users, err := services.GetTopUsersByPoints(10)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
+	var leaderboard []models.LeaderboardUser
+	for _, user := range users {
+		leaderboard = append(leaderboard, models.LeaderboardUser{
+			Name:   user.Name,
+			Email:  user.Email,
+			Points: user.Points,
+		})
+	}
+
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(users)
+	json.NewEncoder(w).Encode(leaderboard)
 }

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"user-management-server/database"
 	"user-management-server/handlers"
+	"user-management-server/middleware"
 )
 
 func main() {
@@ -13,8 +14,15 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/users/{id}/referrer", handlers.CheckReferrer).Methods("POST")
-	r.HandleFunc("/users/register", handlers.RegisterUser).Methods("POST")
+	r.HandleFunc("/register", handlers.RegisterUserHandler).Methods("POST")
+	r.HandleFunc("/login", handlers.LoginHandler).Methods("GET")
+
+	protected := r.PathPrefix("/").Subrouter()
+	protected.Use(middleware.JWTMiddleware)
+
+	protected.HandleFunc("/users/{id}/status", handlers.GetUserStatusHandler).Methods("GET")
+	protected.HandleFunc("/users/leaderboard", handlers.GetLeaderboard).Methods("GET")
+	protected.HandleFunc("/users/{id}/task/complete", handlers.CompleteTask).Methods("POST")
 
 	log.Println("Server started on :8080")
 	if err := http.ListenAndServe(":8080", r); err != nil {

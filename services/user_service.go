@@ -20,8 +20,9 @@ func RegisterUser(email, name, password, referralCode string) (*models.User, err
 		return nil, errors.New("Error hashing password")
 	}
 
-	if referralCode == "" {
-		referralCode = uuid.New().String()[:8]
+	newReferralCode, err := GenerateUniqueReferralCode()
+	if err != nil {
+		return nil, err
 	}
 
 	newUser := models.User{
@@ -29,7 +30,19 @@ func RegisterUser(email, name, password, referralCode string) (*models.User, err
 		Email:        email,
 		Name:         name,
 		Password:     string(hashedPassword),
-		ReferralCode: referralCode,
+		ReferralCode: newReferralCode,
+	}
+
+	if referralCode != "" {
+		var referrer models.User
+		if err := database.DB.Where("referral_code = ?", referralCode).First(&referrer).Error; err == nil {
+			referrer.Points += 5
+			newUser.Points += 7
+			if err := database.DB.Save(&referrer).Error; err != nil {
+				return nil, errors.New("Failed to update referrer points")
+			}
+			newUser.ReferrerID = &referrer.ID
+		}
 	}
 
 	if err := database.DB.Create(&newUser).Error; err != nil {
@@ -39,27 +52,12 @@ func RegisterUser(email, name, password, referralCode string) (*models.User, err
 	return &newUser, nil
 }
 
-func GetUserByID(id int) (models.User, error) {
+func GetUserByID(id string) (models.User, error) {
 	var user models.User
-	if err := database.DB.First(&user, id).Error; err != nil {
+	if err := database.DB.First(&user, "id = ?", id).Error; err != nil {
 		return models.User{}, err
 	}
 	return user, nil
-}
-
-func SetReferrer(userID int, referrerID string) error {
-	var user models.User
-	if err := database.DB.First(&user, userID).Error; err != nil {
-		return err
-	}
-
-	user.ReferrerID = &referrerID
-
-	if err := database.DB.Save(&user).Error; err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func GetTopUsersByPoints(limit int) ([]models.User, error) {

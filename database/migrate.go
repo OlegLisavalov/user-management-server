@@ -7,6 +7,7 @@ import (
 )
 
 func MigrateDB() error {
+
 	if err := DB.AutoMigrate(&models.User{}, &models.Task{}); err != nil {
 		return fmt.Errorf("failed to migrate database: %w", err)
 	}
