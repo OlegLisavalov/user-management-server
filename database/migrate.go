@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"log"
+
 	"user-management-server/models"
 )
 

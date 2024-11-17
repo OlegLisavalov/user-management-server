@@ -17,8 +17,6 @@ func JWTMiddleware(next http.Handler) http.Handler {
 	}
 	secretKey := os.Getenv("JWT_SECRET_KEY")
 
-	log.Printf("JWT Secret Key: %s", secretKey)
-
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		tokenString := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 		if tokenString == "" {

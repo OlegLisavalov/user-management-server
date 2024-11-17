@@ -21,8 +21,8 @@ func main() {
 	protected.Use(middleware.JWTMiddleware)
 
 	protected.HandleFunc("/users/{id}/status", handlers.GetUserStatusHandler).Methods("GET")
-	protected.HandleFunc("/users/leaderboard", handlers.GetLeaderboard).Methods("GET")
-	protected.HandleFunc("/users/{id}/task/complete", handlers.CompleteTask).Methods("POST")
+	protected.HandleFunc("/users/leaderboard", handlers.GetLeaderboardHandler).Methods("GET")
+	protected.HandleFunc("/users/{id}/task/complete", handlers.CompleteTaskHandler).Methods("POST")
 
 	log.Println("Server started on :8080")
 	if err := http.ListenAndServe(":8080", r); err != nil {

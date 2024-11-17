@@ -17,10 +17,11 @@ type User struct {
 
 type Task struct {
 	ID        uint   `gorm:"primaryKey"`
-	Name      string `gorm:"not null"`
-	Points    int    `gorm:"not null"`
-	Completed bool   `gorm:"default:false"`
-	UserID    uint
+	Name      string `json:"name"`
+	Type      string `json:"type"`
+	Points    int    `json:"points"`
+	UserID    string `json:"user_id"`
+	Completed bool   `json:"completed"`
 }
 
 type LeaderboardUser struct {

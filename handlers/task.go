@@ -2,18 +2,25 @@ package handlers
 
 import (
 	"encoding/json"
-	"net/http"
-	"strconv"
-	"user-management-server/services"
-
 	"github.com/gorilla/mux"
+	"net/http"
+
+	"user-management-server/services"
 )
 
-func CompleteTask(w http.ResponseWriter, r *http.Request) {
-	id, _ := strconv.Atoi(mux.Vars(r)["id"])
-	taskName := r.FormValue("task")
+func CompleteTaskHandler(w http.ResponseWriter, r *http.Request) {
+	userID := mux.Vars(r)["id"]
 
-	if err := services.CompleteTask(id, taskName); err != nil {
+	var input struct {
+		TaskType string `json:"task_type"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+
+	if err := services.CompleteTask(userID, input.TaskType); err != nil {
 		http.Error(w, "Unable to complete task", http.StatusInternalServerError)
 		return
 	}

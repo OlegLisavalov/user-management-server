@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
-	"net/http"
-	"user-management-server/services"
-
 	"github.com/gorilla/mux"
+	"net/http"
+
+	"user-management-server/services"
 )
 
 func RegisterUserHandler(w http.ResponseWriter, r *http.Request) {

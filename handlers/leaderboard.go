@@ -3,11 +3,12 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+
 	"user-management-server/models"
 	"user-management-server/services"
 )
 
-func GetLeaderboard(w http.ResponseWriter, r *http.Request) {
+func GetLeaderboardHandler(w http.ResponseWriter, r *http.Request) {
 	users, err := services.GetTopUsersByPoints(10)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
